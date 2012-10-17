@@ -8,6 +8,19 @@ package edu.x3m.kas.utils;
 public class BinaryUtil {
 
 
+    /**
+     * Method converts byte data to binary data
+     * <p/>
+     * <
+     * p/>
+     * <
+     * pre>
+     * [1,1,1,1,0,0,0,0, 0,0,0,0,1,1,1,1] to [240, 15]
+     * </pre>
+     * <p/>
+     * @param buffer
+     * @return
+     */
     public static byte[] convert10ToInt (byte[] buffer) {
         final boolean isOctalDivider = buffer.length % 8 == 0;
         final int length = buffer.length / 8;
@@ -27,6 +40,19 @@ public class BinaryUtil {
 
 
 
+    /**
+     * Method converts binary data to byte data
+     * <p/>
+     * <
+     * p/>
+     * <
+     * pre>
+     * [240, 15] to [1,1,1,1,0,0,0,0, 0,0,0,0,1,1,1,1]
+     * </pre>
+     * <p/>
+     * @param buffer
+     * @return
+     */
     public static byte[] convertIntTo10 (byte[] buffer) {
         final int length = buffer.length * 8;
         final byte[] result = new byte[length];
@@ -35,7 +61,7 @@ public class BinaryUtil {
         byte[] tmp;
         for (int i = 0; i < buffer.length; i++) {
             value = ((int) buffer[i] + 256) % 256;
-            tmp = toBinary8 (value).getBytes ();
+            tmp = toBinary (value).getBytes ();
             System.arraycopy (tmp, 0, result, i * 8, 8);
         }
         return result;

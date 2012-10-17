@@ -18,9 +18,8 @@ import java.util.PriorityQueue;
  */
 public class HuffmannEncoder {
 
-    public static final String PREQUEL = "x3m-huff";
-    
 
+    public static final String PREQUEL = "x3m-huff";
     protected final SimpleNode[] ABC = new SimpleNode[256];
     protected final File sourceFile;
     protected final File destFile;
@@ -45,8 +44,8 @@ public class HuffmannEncoder {
 
     public void encode () throws FileNotFoundException, IOException {
         readFileAndCreateFreqs ();
-        endCodes ();
         createBinaryTree ();
+        endCodes ();
         readAndWrite ();
     }
 
@@ -57,7 +56,7 @@ public class HuffmannEncoder {
         for (int i = 0; i < ABC.length; i++) {
             node = ABC[i];
             if (node != null)
-                System.out.println ((char) node.character + " = " + node.getCode ().reverse ().toString ());
+                System.out.println ((char) node.character + " = " + node.finalCode);
 
         }
     }
@@ -157,6 +156,7 @@ public class HuffmannEncoder {
         if (!reminder.isEmpty ()) {
             hos.writeLastByte (reminder);
         }
+        hos.writeByte (reminder.length ());
         his.close ();
         hos.close ();
     }
@@ -167,7 +167,7 @@ public class HuffmannEncoder {
         for (int i = 0; i < ABC.length; i++) {
             SimpleNode node = ABC[i];
             if (node != null) node.endCode ();
-            
+
         }
     }
 }

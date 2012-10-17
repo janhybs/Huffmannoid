@@ -1,7 +1,10 @@
 package edu.x3m.kas.io;
 
 
+import edu.x3m.kas.core.HuffmannEncoder;
+import edu.x3m.kas.core.structures.SimpleNode;
 import edu.x3m.kas.utils.BinaryUtil;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,11 +14,45 @@ import java.io.IOException;
 /**
  * @author Hans
  */
-public class HuffmannOutputStream extends FileOutputStream {
+public class HuffmannOutputStream extends DataOutputStream {
 
 
     public HuffmannOutputStream (File file) throws FileNotFoundException {
-        super (file);
+        super (new FileOutputStream (file));
+    }
+
+
+
+    public void writePrequel () throws IOException {
+        write (HuffmannEncoder.PREQUEL);
+    }
+
+
+
+    public void writeAlphabet (final SimpleNode[] ABC) throws IOException {
+        int validChars = 0, i;
+        SimpleNode node;
+
+
+        //# counting valid chars
+        for (i = 0; i < ABC.length; i++)
+            if (ABC[i] != null) validChars++;
+
+        writeByte (validChars);
+        for (i = 0; i < ABC.length; i++) {
+            node = ABC[i];
+            if (node != null) {
+                write ((char) node.character);
+                writeByte (node.codeLength);
+                write (node.finalCode);
+            }
+        }
+    }
+
+
+
+    public void write (String s) throws IOException {
+        write (s.getBytes ());
     }
 
 
