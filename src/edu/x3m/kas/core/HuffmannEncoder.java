@@ -45,6 +45,7 @@ public class HuffmannEncoder {
 
     public void encode () throws FileNotFoundException, IOException {
         readFileAndCreateFreqs ();
+        endCodes ();
         createBinaryTree ();
         readAndWrite ();
     }
@@ -141,7 +142,7 @@ public class HuffmannEncoder {
             for (int i = 0; i < buffer.length; i++) {
                 //# conversion
                 ch = (int) (buffer[i] + 256) % 256;
-                tmp.append (ABC[ch].getCode ().reverse ().toString ());
+                tmp.append (ABC[ch].finalCode);
             }
 
             size = tmp.length () / 8;
@@ -158,5 +159,15 @@ public class HuffmannEncoder {
         }
         his.close ();
         hos.close ();
+    }
+
+
+
+    private void endCodes () {
+        for (int i = 0; i < ABC.length; i++) {
+            SimpleNode node = ABC[i];
+            if (node != null) node.endCode ();
+            
+        }
     }
 }
