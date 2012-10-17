@@ -5,7 +5,7 @@ package edu.x3m.kas.core.structures;
  *
  * @author Hans
  */
-public class AbstractNode implements Comparable<SimpleNode> {
+public class AbstractNode implements Comparable<AbstractNode> {
 
 
     private static final int DEFAULT_COUNT = 1;
@@ -42,7 +42,7 @@ public class AbstractNode implements Comparable<SimpleNode> {
 
 
     @Override
-    public int compareTo (SimpleNode o) {
+    public int compareTo (AbstractNode o) {
         return getCount () - o.getCount ();
     }
 }
