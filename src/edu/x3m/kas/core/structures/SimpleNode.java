@@ -17,9 +17,17 @@ public class SimpleNode extends AbstractNode {
 
 
 
+    public SimpleNode (int character, StringBuilder code) {
+        this.character = character;
+        this.code = code;
+    }
+
+    
+
+
     @Override
     public String toString () {
-        return String.format ("[N %s %d]", (char)character, count);
+        return String.format ("[N %s %d %s]", (char)character, count, code.reverse ());
     }
     
     
