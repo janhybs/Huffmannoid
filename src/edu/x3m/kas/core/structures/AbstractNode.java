@@ -17,7 +17,7 @@ public class AbstractNode implements Comparable<SimpleNode> {
 
 
 
-    protected void append (char c) {
+    public void append (char c) {
         code.append (c);
     }
 

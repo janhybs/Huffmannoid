@@ -1,6 +1,7 @@
-package edu.x3m.kas;
+package edu.x3m.kas.io;
 
 
+import edu.x3m.kas.utils.BinaryUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,5 +34,15 @@ public class HuffmannInputStream extends FileInputStream {
         byte[] result = new byte[size];
         System.arraycopy (buffer, 0, result, 0, size);
         return result;
+    }
+    
+    public void printBinaryAll () throws IOException {
+        
+        int ch, i = 0;
+        while ((ch = read ()) != -1) {
+            System.out.print (BinaryUtil.toBinary (ch)+" ");
+            if (i != 0 && i++ % 8 == 0) System.out.println ();
+        }
+        System.out.println ("");
     }
 }

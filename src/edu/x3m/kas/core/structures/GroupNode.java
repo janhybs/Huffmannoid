@@ -8,11 +8,11 @@ package edu.x3m.kas.core.structures;
 public class GroupNode extends AbstractNode {
 
 
-    protected SimpleNode left, right;
+    protected AbstractNode left, right;
 
 
 
-    public GroupNode (SimpleNode left, SimpleNode right) {
+    public GroupNode (AbstractNode left, AbstractNode right) {
         this.left = left;
         this.right = right;
         this.count = (left == null ? 0 : left.count) + (right == null ? 0 : right.count);
@@ -22,7 +22,7 @@ public class GroupNode extends AbstractNode {
 
 
     @Override
-    protected void append (char c) {
+    public void append (char c) {
         if (left != null)
             left.append (c);
         if (right != null)
@@ -37,4 +37,13 @@ public class GroupNode extends AbstractNode {
         if (right != null)
             right.append ('1');
     }
+
+
+
+    @Override
+    public String toString () {
+        return String.format ("[G %d [L:%s][R:%s]]", count, left, right);
+    }
+    
+    
 }

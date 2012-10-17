@@ -14,4 +14,13 @@ public class SimpleNode extends AbstractNode {
     public SimpleNode (int character) {
         this.character = character;
     }
+
+
+
+    @Override
+    public String toString () {
+        return String.format ("[N %s %d]", (char)character, count);
+    }
+    
+    
 }

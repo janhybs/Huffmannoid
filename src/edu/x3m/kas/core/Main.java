@@ -1,22 +1,29 @@
 package edu.x3m.kas.core;
 
 
-import edu.x3m.kas.utils.BinaryUtil;
-
+import edu.x3m.kas.io.HuffmannInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 /**
- *
  * @author Hans
  */
 public class Main {
 
 
-    public static void main (String[] args) {
-        String s = "1111000000001111101";
+    public static void main (String[] args) throws FileNotFoundException, IOException {
+
         
-        BinaryUtil.convert10ToInt (s.getBytes (), false);
+        File f = new File ("./test-files/test-01");
+        HuffmannEncoder h = new HuffmannEncoder (f);
+        h.encode ();
+
+        h.printAlphabet ();
         
-        BinaryUtil.convertIntTo10 (new int[]{240,15,5});
+        new HuffmannInputStream (new File ("./test-files/test-01.x3m.huff")).printBinaryAll ();
+        new HuffmannInputStream (new File ("./test-files/test-01")).printBinaryAll ();
+
     }
 }
