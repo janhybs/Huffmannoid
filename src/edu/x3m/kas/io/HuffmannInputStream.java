@@ -41,7 +41,7 @@ public class HuffmannInputStream extends FileInputStream {
         int ch, i = 0;
         while ((ch = read ()) != -1) {
             System.out.print (BinaryUtil.toBinary (ch)+" ");
-            if (i != 0 && i++ % 8 == 0) System.out.println ();
+            if (i++ != 0 && i % 16 == 0) System.out.println ();
         }
         System.out.println ("");
     }
