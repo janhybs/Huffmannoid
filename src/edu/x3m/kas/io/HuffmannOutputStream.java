@@ -17,6 +17,13 @@ import java.io.IOException;
 public class HuffmannOutputStream extends DataOutputStream {
 
 
+    public static final int BUFFER_SIZE = 8 * 1024;
+    //
+    byte[] buffer = new byte[BUFFER_SIZE];
+    int bufferIndex = 0;
+
+
+
     public HuffmannOutputStream (File file) throws FileNotFoundException {
         super (new FileOutputStream (file));
     }
@@ -59,5 +66,27 @@ public class HuffmannOutputStream extends DataOutputStream {
 
     public void writeLastByte (String s) throws IOException {
         write (new byte[] {BinaryUtil.format (s)});
+    }
+
+
+
+    @Override
+    public synchronized void write (int b) throws IOException {
+        buffer[bufferIndex++] = (byte) b;
+
+        if (bufferIndex >= BUFFER_SIZE) {
+            write (buffer);
+            bufferIndex = 0;
+        }
+    }
+
+
+
+    @Override
+    public void close () throws IOException {
+        if (bufferIndex > 0)
+            write (buffer, 0, bufferIndex);
+
+        super.close ();
     }
 }
