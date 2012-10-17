@@ -18,6 +18,8 @@ import java.util.PriorityQueue;
  */
 public class HuffmannEncoder {
 
+    public static final String PREQUEL = "x3m-huff";
+    
 
     protected final SimpleNode[] ABC = new SimpleNode[256];
     protected final File sourceFile;
@@ -52,9 +54,9 @@ public class HuffmannEncoder {
     public void printAlphabet () {
         SimpleNode node;
         for (int i = 0; i < ABC.length; i++) {
-             node = ABC[i];
+            node = ABC[i];
             if (node != null)
-                System.out.println ((char)node.character + " = " + node.getCode ().reverse ().toString ());
+                System.out.println ((char) node.character + " = " + node.getCode ().reverse ().toString ());
 
         }
     }
@@ -112,12 +114,20 @@ public class HuffmannEncoder {
 
 
     private void readAndWrite () throws FileNotFoundException, IOException {
+        hos = new HuffmannOutputStream (destFile);
+        hos.writePrequel ();
+        hos.writeAlphabet (ABC);
+        writeData ();
+    }
+
+
+
+    private void writeData () throws FileNotFoundException, IOException {
 
         his = new HuffmannInputStream (sourceFile);
-        hos = new HuffmannOutputStream (destFile);
 
-        StringBuilder tmp = null;
         String reminder = "", codeSequence;
+        StringBuilder tmp;
         byte[] buffer;
         byte[] bytesToWrite;
         int ch, size;
