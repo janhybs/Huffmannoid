@@ -13,6 +13,9 @@ public class Timer {
 
 
 
+    /**
+     * Creates Timer
+     */
     public Timer () {
     }
 
