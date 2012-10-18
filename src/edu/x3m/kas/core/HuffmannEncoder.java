@@ -1,19 +1,18 @@
 package edu.x3m.kas.core;
 
 
-import edu.x3m.kas.core.structures.AbstractNode;
-import edu.x3m.kas.core.structures.GroupNode;
 import edu.x3m.kas.core.structures.SimpleNode;
+import edu.x3m.kas.io.HuffmannBinaryOutputStream;
 import edu.x3m.kas.io.HuffmannInputStream;
-import edu.x3m.kas.io.HuffmannOutputStream;
 import edu.x3m.kas.utils.BinaryUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.PriorityQueue;
 
 
 /**
+ * Class for encoding files using Huffmann's algorithm
+ * 
  * @author Hans
  */
 public class HuffmannEncoder {
@@ -25,10 +24,16 @@ public class HuffmannEncoder {
     protected final File destFile;
     //
     protected HuffmannInputStream his;
-    protected HuffmannOutputStream hos;
+    protected HuffmannBinaryOutputStream hos;
 
 
 
+    /**
+     * Creates HuffmannEncoder which encodes given file into given file;
+     *
+     * @param sourceFile source file
+     * @param destFile destination file
+     */
     public HuffmannEncoder (File sourceFile, File destFile) {
         this.sourceFile = sourceFile;
         this.destFile = destFile;
@@ -36,30 +41,31 @@ public class HuffmannEncoder {
 
 
 
+    /**
+     * Creates HuffmannEncoder which encodes given file into given file + "x3m.huff" file
+     *
+     * @param sourceFile source file
+     */
     public HuffmannEncoder (File sourceFile) {
         this (sourceFile, new File (sourceFile.getPath () + ".x3m.huff"));
     }
 
 
 
+    /**
+     * Method encodes file specified in constructor into file specified in constructor.
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void encode () throws FileNotFoundException, IOException {
         readFileAndCreateFreqs ();
-        createBinaryTree ();
-        endCodes ();
+        Huffmann.createBinaryTree (ABC);
         readAndWrite ();
     }
-
-
-
-    public void printAlphabet () {
-        SimpleNode node;
-        for (int i = 0; i < ABC.length; i++) {
-            node = ABC[i];
-            if (node != null)
-                System.out.println ((char) node.character + " = " + node.finalCode);
-
-        }
-    }
+    //--------------------------------------
+    //# Privates
+    //--------------------------------------
 
 
 
@@ -84,39 +90,14 @@ public class HuffmannEncoder {
 
 
 
-    private void createBinaryTree () {
-        PriorityQueue<AbstractNode> items = new PriorityQueue<> ();
-        int mergesLeft;
-
-        //# pushing only used items to array
-        for (int i = 0; i < ABC.length; i++) {
-            if (ABC[i] == null) continue;
-            items.add (ABC[i]);
-        }
-
-        //System.out.println (items);
-
-        //# defining how many steps it'll take to created weighted tree
-        mergesLeft = items.size () - 1;
-
-
-        //# no tree, so it's easy
-        if (mergesLeft == 0) {
-            items.poll ().append ('1');
-        } else {
-
-            //# removing two last items, and add new one
-            while (mergesLeft-- > 0)
-                items.add (new GroupNode (items.poll (), items.poll ()));
-        }
-    }
-
-
-
     private void readAndWrite () throws FileNotFoundException, IOException {
-        hos = new HuffmannOutputStream (destFile);
+        hos = new HuffmannBinaryOutputStream (destFile);
+
+        //# writing header
         hos.writePrequel ();
         hos.writeAlphabet (ABC);
+
+        //#writing data
         writeData ();
     }
 
@@ -149,25 +130,17 @@ public class HuffmannEncoder {
 
 
             codeSequence = new String (tmp).substring (0, size * 8);
+
             bytesToWrite = BinaryUtil.convert10ToInt (codeSequence.getBytes ());
             hos.write (bytesToWrite);
         }
 
-        if (!reminder.isEmpty ()) {
+        if (!reminder.isEmpty ())
             hos.writeLastByte (reminder);
-        }
+
+
         hos.writeByte (reminder.length ());
         his.close ();
         hos.close ();
-    }
-
-
-
-    private void endCodes () {
-        for (int i = 0; i < ABC.length; i++) {
-            SimpleNode node = ABC[i];
-            if (node != null) node.endCode ();
-
-        }
     }
 }

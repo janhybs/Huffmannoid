@@ -1,8 +1,9 @@
 package edu.x3m.kas.core;
 
 
+import edu.x3m.kas.core.structures.GroupNode;
 import edu.x3m.kas.core.structures.SimpleNode;
-import edu.x3m.kas.io.HuffmannInputStream;
+import edu.x3m.kas.io.HuffmannBinaryInputStream;
 import edu.x3m.kas.io.HuffmannOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,21 +11,31 @@ import java.io.IOException;
 
 
 /**
+ * Class for decoding encoded file which used Huffmann's algorithm
+ *
  * @author Hans
  */
 public class HuffmannDecoder {
 
 
-    public static final String PREQUEL = "x3m-huff";
+    //
     protected SimpleNode[] ABC;
     protected final File sourceFile;
     protected final File destFile;
     //
-    protected HuffmannInputStream his;
+    protected HuffmannBinaryInputStream his;
     protected HuffmannOutputStream hos;
+    private GroupNode root;
+    private ParseResult parseResult;
 
 
 
+    /**
+     * Creates HuffmannDecoder which decodes given file into given file;
+     *
+     * @param sourceFile source file
+     * @param destFile   destination file
+     */
     public HuffmannDecoder (File sourceFile, File destFile) {
         this.sourceFile = sourceFile;
         this.destFile = destFile;
@@ -32,90 +43,105 @@ public class HuffmannDecoder {
 
 
 
+    /**
+     * Creates HuffmannDecoder which decodes given file into given file + "x3m.huff" file
+     *
+     * @param sourceFile source file
+     */
     public HuffmannDecoder (File sourceFile) {
         this (sourceFile, new File (sourceFile.getPath () + ".x3m.huff"));
     }
 
 
 
-    public void decode () throws FileNotFoundException, IOException {
-        his = new HuffmannInputStream (sourceFile);
+    /**
+     * Method decodes file specified in constructor into file specified in constructor.
+     *
+     * @throws UnsupportedFileException when file is not supported
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void decode () throws FileNotFoundException, IOException, UnsupportedFileException {
+        his = new HuffmannBinaryInputStream (sourceFile);
+        if (!his.isSupported ())
+            throw new UnsupportedFileException ();
+
         hos = new HuffmannOutputStream (destFile);
-        ABC = his.getAlphabet ();
 
-        byte[] buffer;
-        int pos;
-        int validUntil;
-        SimpleNode node;
-        String reminder = "";
-        while ((buffer = his.getNextBinaryBuffer (reminder.length ())) != null) {
 
-            if (!reminder.isEmpty ())
-                System.arraycopy (reminder.getBytes (), 0, buffer, 0, reminder.length ());
+        ABC = his.readAlphabet ();
+        root = Huffmann.createBinaryTree (ABC);
 
-            validUntil = buffer.length;
+        parseResult = new ParseResult (0, 0);
+        byte[] binary;
+        int reminder;
+        int validBits;
+        byte[] result;
 
-            if (!his.hasNext ()) {
-                validUntil -= 8 + (8 - Byte.parseByte (new String (buffer, buffer.length - 8, 8), 2));
 
-            }
+        while ((binary = his.readNextBinaryBuffer ()) != null) {
 
-            pos = 0;
-            while ((node = getNextCode (buffer, pos, validUntil)) != null) {
-                pos += node.codeLength;
-                hos.write (node.character);
-            }
-            
-            reminder = new String (buffer, pos, buffer.length - pos);
+            //# getting valid bits count
+            if (his.hasNext ()) validBits = binary.length;
+            else validBits = binary.length - 8 - (8 - his.getValidBitsInLastByte ());
+
+            //# creates needed data holders and searching for prefixes
+            result = new byte[binary.length];
+            parseBytes (binary, result, validBits);
+            reminder = parseResult.reminderLength;
+            his.setReminderLength (reminder);
+
+            //# writing to out file
+            hos.write (result, 0, parseResult.validBytes);
         }
-        
+
         hos.close ();
+
+    }
+
+    //--------------------------------------
+    //# Privates
+    //--------------------------------------
+
+
+    /**
+     * Prefix search.
+     *
+     * @param binary    source array
+     * @param result    final array
+     * @param validBits number of valid bites
+     */
+    private void parseBytes (byte[] binary, byte[] result, int validBits) {
+        int from = 0;
+        int validBytes = 0;
+        SimpleNode node;
+
+
+        if (validBits != binary.length) {
+            byte[] tmp = new byte[validBits];
+            System.arraycopy (binary, 0, tmp, 0, validBits);
+            binary = tmp;
+        }
+
+        while ((node = root.find (binary, from, 0)) != null) {
+            from += node.codeLength;
+            result[validBytes++] = (byte) node.character;
+        }
+        parseResult.reminderLength = (binary.length - from);
+        parseResult.validBytes = validBytes;
     }
 
 
-
-    private SimpleNode getNextCode (byte[] buffer, int pos, int validUntil) {
-        boolean[] mask = new boolean[ABC.length];
-        
-        //System.out.println (new String (buffer, pos, validUntil-pos));
-
-        SimpleNode node, correct = null;
-        int i, j, c;
-        
-        for (i = 0; i < buffer.length - pos; i++) {
-            if ((i+pos) >= validUntil)
-                return null;
-            
-            byte b = buffer[i + pos];
-
-            c = 0;
-            for (j = 0; j < ABC.length; j++) {
-                //# already excluded
-                if (mask[j]) continue;
-
-                //# init
-                node = ABC[j];
-
-                //# too  long
-                if (i >= node.codeLength) {
-                    mask[j] = true;
-                    continue;
-                }
+    class ParseResult {
 
 
-                if (node.finalCode.charAt (i) == b) {
-                    correct = node;
-                    c++;
-                } else {
-                    mask[j] = true;
-                }
-            }
+        public int reminderLength, validBytes;
 
-            if (c == 1) {
-                if (correct.character == 99);
-                return correct;
-            }
+
+
+        public ParseResult (int reminderLength, int validBytes) {
+            this.reminderLength = reminderLength;
+            this.validBytes = validBytes;
         }
-        return null;
     }
 }

@@ -13,29 +13,49 @@ public class SimpleNode extends AbstractNode {
 
 
 
+    /**
+     * Constructor when encoding
+     *
+     * @param character
+     */
     public SimpleNode (int character) {
         this.character = character;
     }
 
 
 
-    public SimpleNode (int character, String code) {
+    /**
+     * Constructor when decoding
+     *
+     * @param character
+     * @param count
+     */
+    public SimpleNode (int character, int count) {
         this.character = character;
-        this.finalCode = code;
-        this.codeLength = code.length ();
+        this.count = count;
     }
 
 
 
     @Override
     public String toString () {
-        return String.format ("[N %s %d %s]", (char) character, count, finalCode);
+        return String.format ("[N %s %dx '%s']", (char) character, count, finalCode);
     }
 
 
 
+    /**
+     * Closes code and reverses it.
+     */
     public void endCode () {
         finalCode = code.reverse ().toString ();
         codeLength = finalCode.length ();
+    }
+
+
+
+    @Override
+    public SimpleNode find (byte[] data, int from, int pos) {
+        return this;
     }
 }

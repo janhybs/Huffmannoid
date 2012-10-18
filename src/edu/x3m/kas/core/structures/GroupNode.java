@@ -67,6 +67,18 @@ public class GroupNode extends AbstractNode {
             else
                 System.out.println (s + "  " + right);
         }
+    }
 
+
+
+    @Override
+    public SimpleNode find (byte[] data, int from, int pos) {
+        if (from + pos >= data.length) return null;
+        
+        if (data[from + pos] == '0') {
+            return left == null ? null : left.find (data, from, pos + 1);
+        } else {
+            return right == null ? null : right.find (data, from, pos + 1);
+        }
     }
 }

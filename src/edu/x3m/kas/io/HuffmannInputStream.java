@@ -1,36 +1,30 @@
 package edu.x3m.kas.io;
 
 
-import edu.x3m.kas.core.HuffmannEncoder;
-import edu.x3m.kas.core.structures.SimpleNode;
 import edu.x3m.kas.utils.BinaryUtil;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import javax.activation.UnsupportedDataTypeException;
 
 
 /**
- *
+ * Extension of {@link DataInputStream}. Provides buffering and binary printing
  * @author Hans
  */
 public class HuffmannInputStream extends DataInputStream {
 
 
+    public static final int BYTE = 8;
     public static final int BUFFER_SIZE = 8 * 1024;
     //
     byte[] buffer = new byte[BUFFER_SIZE];
-    public final long fileSize;
-    public long bytesLeft;
 
 
 
     public HuffmannInputStream (File file) throws FileNotFoundException {
         super (new FileInputStream (file));
-        fileSize = file.length ();
-        bytesLeft = fileSize;
     }
 
 
@@ -38,44 +32,10 @@ public class HuffmannInputStream extends DataInputStream {
     public byte[] getNextNormalBuffer () throws IOException {
         int size = read (buffer);
         if (size == -1) return null;
-        bytesLeft -= size;
 
         byte[] result = new byte[size];
         System.arraycopy (buffer, 0, result, 0, size);
         return result;
-    }
-
-
-
-    public byte[] getNextBinaryBuffer (int extraSpace) throws IOException {
-        if (bytesLeft - BUFFER_SIZE == 1) {
-            buffer = new byte[BUFFER_SIZE + 1];
-        }
-        int size = read (buffer);
-        if (size == -1) return null;
-        bytesLeft -= size;
-
-        byte[] result = new byte[size];
-        System.arraycopy (buffer, 0, result, 0, size);
-        result = BinaryUtil.convertIntTo10 (result);
-        if (extraSpace == 0)
-            return result;
-
-        byte[] bigger = new byte[result.length + extraSpace];
-        System.arraycopy (result, 0, bigger, extraSpace, result.length);
-        return bigger;
-    }
-
-
-
-    public boolean hasNext () {
-        return bytesLeft > 0;
-    }
-
-
-
-    public byte[] getNextBinaryBuffer () throws IOException {
-        return getNextBinaryBuffer (0);
     }
 
 
@@ -88,44 +48,5 @@ public class HuffmannInputStream extends DataInputStream {
             if (i++ != 0 && i % 16 == 0) System.out.println ();
         }
         System.out.println ("");
-    }
-
-
-
-    public SimpleNode[] getAlphabet () throws IOException {
-        byte[] buffer = new byte[HuffmannEncoder.PREQUEL.length ()];
-        bytesLeft -= HuffmannEncoder.PREQUEL.length ();
-
-        SimpleNode[] result;
-        read (buffer);
-
-        String s = new String (buffer);
-
-        if (!s.equalsIgnoreCase (HuffmannEncoder.PREQUEL))
-            throw new UnsupportedDataTypeException ();
-
-        int count, ch;
-        int validChars = readInt ();
-        bytesLeft -= 4;
-
-        result = new SimpleNode[validChars];
-        for (int i = 0; i < validChars; i++) {
-            //# getting char
-            ch = (readByte () + 256) % 256;
-
-            //# getting count
-            count = readInt ();
-
-
-            bytesLeft -= 1 + 4;
-            result[i] = new SimpleNode (ch, count);
-
-            //codeLength = (readByte () + 256) % 256;
-            //buffer = new byte[codeLength];
-            //read (buffer);
-
-        }
-
-        return result;
     }
 }
