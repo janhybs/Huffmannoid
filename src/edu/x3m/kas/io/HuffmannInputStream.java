@@ -19,7 +19,7 @@ import javax.activation.UnsupportedDataTypeException;
 public class HuffmannInputStream extends DataInputStream {
 
 
-    public static final int BUFFER_SIZE = 2;//8 * 1024;
+    public static final int BUFFER_SIZE = 8 * 1024;
     //
     byte[] buffer = new byte[BUFFER_SIZE];
     public final long fileSize;
@@ -104,20 +104,26 @@ public class HuffmannInputStream extends DataInputStream {
         if (!s.equalsIgnoreCase (HuffmannEncoder.PREQUEL))
             throw new UnsupportedDataTypeException ();
 
-        int codeLength, ch;
-        int validChars = readByte ();
-        bytesLeft--;
+        int count, ch;
+        int validChars = readInt ();
+        bytesLeft -= 4;
 
         result = new SimpleNode[validChars];
         for (int i = 0; i < validChars; i++) {
+            //# getting char
             ch = (readByte () + 256) % 256;
-            codeLength = (readByte () + 256) % 256;
-            buffer = new byte[codeLength];
 
-            read (buffer);
-            bytesLeft -= 1 + 1 + codeLength;
+            //# getting count
+            count = readInt ();
 
-            result[i] = new SimpleNode (ch, new String (buffer));
+
+            bytesLeft -= 1 + 4;
+            result[i] = new SimpleNode (ch, count);
+
+            //codeLength = (readByte () + 256) % 256;
+            //buffer = new byte[codeLength];
+            //read (buffer);
+
         }
 
         return result;
