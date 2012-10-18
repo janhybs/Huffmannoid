@@ -45,13 +45,16 @@ public class HuffmannOutputStream extends DataOutputStream {
         for (i = 0; i < ABC.length; i++)
             if (ABC[i] != null) validChars++;
 
-        writeByte (validChars);
+        writeInt (validChars);
         for (i = 0; i < ABC.length; i++) {
             node = ABC[i];
             if (node != null) {
                 write ((char) node.character);
-                writeByte (node.codeLength);
-                write (node.finalCode);
+                writeInt (node.count);
+
+                //# old version encoding...
+                //writeByte (node.codeLength);
+                //write (node.finalCode);
             }
         }
     }
