@@ -44,6 +44,29 @@ public class GroupNode extends AbstractNode {
     public String toString () {
         return String.format ("[G %d [L:%s][R:%s]]", count, left, right);
     }
-    
-    
+
+
+
+    public void printTree () {
+        printTree ("");
+    }
+
+
+
+    private void printTree (String s) {
+        System.out.println (s + "[G]");
+        if (left != null) {
+            if (left instanceof GroupNode)
+                ((GroupNode) left).printTree (s + "  ");
+            else
+                System.out.println (s + "  " + left);
+        }
+        if (right != null) {
+            if (right instanceof GroupNode)
+                ((GroupNode) right).printTree (s + "  ");
+            else
+                System.out.println (s + "  " + right);
+        }
+
+    }
 }
