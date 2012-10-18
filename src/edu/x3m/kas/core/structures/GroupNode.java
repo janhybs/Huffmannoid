@@ -2,7 +2,11 @@ package edu.x3m.kas.core.structures;
 
 
 /**
+ * Class representing fictive node.
+ * Object contains left and right node
  *
+ * @see AbstractNode
+ * @see SimpleNode
  * @author Hans
  */
 public class GroupNode extends AbstractNode {
@@ -74,7 +78,7 @@ public class GroupNode extends AbstractNode {
     @Override
     public SimpleNode find (byte[] data, int from, int pos) {
         if (from + pos >= data.length) return null;
-        
+
         if (data[from + pos] == '0') {
             return left == null ? null : left.find (data, from, pos + 1);
         } else {

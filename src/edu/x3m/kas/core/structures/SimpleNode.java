@@ -2,6 +2,10 @@ package edu.x3m.kas.core.structures;
 
 
 /**
+ * Class represents actual node.
+ *
+ * @see AbstractNode
+ * @see GroupNode
  * @author Hans
  */
 public class SimpleNode extends AbstractNode {

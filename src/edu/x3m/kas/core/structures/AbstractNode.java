@@ -2,8 +2,11 @@ package edu.x3m.kas.core.structures;
 
 
 /**
- * Abstract class representing node in Huffmann's encoding and decoding
+ * Abstract class representing node in Huffmann's encoding and decoding.
  *
+ *
+ * @see GroupNode.
+ * @see SimpleNode
  * @author Hans
  */
 public abstract class AbstractNode implements Comparable<AbstractNode> {
