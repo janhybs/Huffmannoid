@@ -64,7 +64,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
     /**
      * Method return weighted count (with character ordinality)
      *
-     * @return
+     * @return weighted count used when comparing
      */
     protected int getCount () {
         return count * DEFAULT_BALANCE_INDEX;
