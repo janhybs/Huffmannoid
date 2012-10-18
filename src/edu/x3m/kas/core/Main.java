@@ -22,16 +22,16 @@ public class Main {
     public static void main (String[] args) throws FileNotFoundException, IOException, InterruptedException, UnsupportedFileException {
 
 
-        //File f1 = new File ("./test-files/test-01");
-        //File f2 = new File ("./test-files/test-01.x3m.huff");
-        //File f1 = new File ("./test-files/screenshots.bmp");
-        //File f2 = new File ("./test-files/screenshots.bmp.x3m.huff");
-        //File f1 = new File ("./test-files/club-bleach.gif");
-        //File f2 = new File ("./test-files/club-bleach.gif.x3m.huff");
-        //File f1 = new File ("./test-files/trololo.flv");
-        //File f2 = new File ("./test-files/trololo.flv.x3m.huff");
-        File f1 = new File ("./test-files/galaxy.mp4");
-        File f2 = new File ("./test-files/galaxy.mp4.x3m.huff");
+        File f1 = new File ("./testfiles/test-01");
+        File f2 = new File ("./testfiles/test-01.x3m.huff");
+        //File f1 = new File ("./testfiles/screenshots.bmp");
+        //File f2 = new File ("./testfiles/screenshots.bmp.x3m.huff");
+        //File f1 = new File ("./testfiles/club-bleach.gif");
+        //File f2 = new File ("./testfiles/club-bleach.gif.x3m.huff");
+        //File f1 = new File ("./testfiles/trololo.flv");
+        //File f2 = new File ("./testfiles/trololo.flv.x3m.huff");
+        //File f1 = new File ("./testfiles/galaxy.mp4");
+        //File f2 = new File ("./testfiles/galaxy.mp4.x3m.huff");
 
 
 
