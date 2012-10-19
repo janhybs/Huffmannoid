@@ -11,6 +11,7 @@ import java.io.IOException;
 
 /**
  * Extension of {@link DataInputStream}. Provides buffering and binary printing
+ *
  * @author Hans
  */
 public class HuffmannInputStream extends DataInputStream {
@@ -46,8 +47,8 @@ public class HuffmannInputStream extends DataInputStream {
 
         int ch, i = 0;
         while ((ch = read ()) != -1) {
-            System.out.print (BinaryUtil.toBinary (ch) + "-");
-            if (i++ != 0 && i % 16 == 0) System.out.println ();
+            System.out.format ("%8s[%s, %03d]   ", BinaryUtil.toBinary (ch), ch < 32 ? " " : (char)ch, ch);
+            if (i++ != 0 && i % 8 == 0) System.out.println ();
         }
         System.out.println ("");
     }
