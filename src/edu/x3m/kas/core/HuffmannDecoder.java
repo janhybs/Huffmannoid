@@ -124,7 +124,7 @@ public class HuffmannDecoder implements IProgressable {
             //# monitoring
             if (huffmannMonitor != null) {
                 bytesLoaded += buffer.length / 8;
-                prcCur = (100 * bytesLoaded / (int) his.bytesTotal);
+                prcCur = (int) (((double) bytesLoaded / his.bytesTotal) * 100);
                 if (prcCur != prcPrev)
                     huffmannMonitor.onSectionProgress (DECODING, prcPrev = prcCur);
             }
