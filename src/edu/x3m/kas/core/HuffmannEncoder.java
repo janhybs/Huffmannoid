@@ -1,9 +1,11 @@
 package edu.x3m.kas.core;
 
 
+import edu.x3m.kas.core.iface.IProgressable;
 import edu.x3m.kas.core.structures.SimpleNode;
 import edu.x3m.kas.io.HuffmannBinaryOutputStream;
 import edu.x3m.kas.io.HuffmannInputStream;
+import edu.x3m.kas.monitors.IHuffmannMonitor;
 import edu.x3m.kas.utils.BinaryUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,12 +14,16 @@ import java.io.IOException;
 
 /**
  * Class for encoding files using Huffmann's algorithm
- * 
+ *
  * @author Hans
  */
-public class HuffmannEncoder {
+public class HuffmannEncoder implements IProgressable {
 
 
+    public static final String ALPHABET_CREATION = "Alphabet creation";
+    public static final String TREE_CREATION = "Tree creation";
+    public static final String ENCODING = "Encoding";
+    //
     public static final String PREQUEL = "x3m-huff";
     protected final SimpleNode[] ABC = new SimpleNode[256];
     protected final File sourceFile;
@@ -25,6 +31,7 @@ public class HuffmannEncoder {
     //
     protected HuffmannInputStream his;
     protected HuffmannBinaryOutputStream hos;
+    protected IHuffmannMonitor huffmannMonitor;
 
 
 
@@ -32,7 +39,7 @@ public class HuffmannEncoder {
      * Creates HuffmannEncoder which encodes given file into given file;
      *
      * @param sourceFile source file
-     * @param destFile destination file
+     * @param destFile   destination file
      */
     public HuffmannEncoder (File sourceFile, File destFile) {
         this.sourceFile = sourceFile;
@@ -59,9 +66,22 @@ public class HuffmannEncoder {
      * @throws IOException
      */
     public void encode () throws FileNotFoundException, IOException {
+        //# reading file and creating alphabet
+        if (huffmannMonitor != null) huffmannMonitor.onSectionStart (ALPHABET_CREATION);
         readFileAndCreateFreqs ();
+        if (huffmannMonitor != null) huffmannMonitor.onSectionEnd (ALPHABET_CREATION);
+
+
+        //# creating binary tree
+        if (huffmannMonitor != null) huffmannMonitor.onSectionStart (TREE_CREATION);
         Huffmann.createBinaryTree (ABC);
+        if (huffmannMonitor != null) huffmannMonitor.onSectionEnd (TREE_CREATION);
+
+
+        //# encoding
+        if (huffmannMonitor != null) huffmannMonitor.onSectionStart (ENCODING);
         readAndWrite ();
+        if (huffmannMonitor != null) huffmannMonitor.onSectionEnd (ENCODING);
     }
     //--------------------------------------
     //# Privates
@@ -76,10 +96,8 @@ public class HuffmannEncoder {
 
         while ((buffer = his.getNextNormalBuffer ()) != null) {
             for (int i = 0; i < buffer.length; i++) {
-
                 //# conversion
                 ch = (int) (buffer[i] + 256) % 256;
-
 
                 if (ABC[ch] == null) ABC[ch] = new SimpleNode (ch);
                 else ABC[ch].inc ();
@@ -112,6 +130,8 @@ public class HuffmannEncoder {
         byte[] buffer;
         byte[] bytesToWrite;
         int ch, size;
+        int bytesLoaded = 0;
+        int prcCur, prcPrev = 0;
 
         while ((buffer = his.getNextNormalBuffer ()) != null) {
 
@@ -133,6 +153,15 @@ public class HuffmannEncoder {
 
             bytesToWrite = BinaryUtil.convert10ToInt (codeSequence.getBytes ());
             hos.write (bytesToWrite);
+
+
+            //# monitoring
+            if (huffmannMonitor != null) {
+                bytesLoaded += buffer.length;
+                prcCur = (100 * bytesLoaded / (int) his.bytesTotal);
+                if (prcCur != prcPrev)
+                    huffmannMonitor.onSectionProgress (ENCODING, prcPrev = prcCur);
+            }
         }
 
         if (!reminder.isEmpty ())
@@ -142,5 +171,19 @@ public class HuffmannEncoder {
         hos.writeByte (reminder.length ());
         his.close ();
         hos.close ();
+    }
+
+
+
+    @Override
+    public void setHuffmannMonitor (IHuffmannMonitor huffmannMonitor) {
+        this.huffmannMonitor = huffmannMonitor;
+    }
+
+
+
+    @Override
+    public IHuffmannMonitor getHuffmannMonitor () {
+        return huffmannMonitor;
     }
 }
