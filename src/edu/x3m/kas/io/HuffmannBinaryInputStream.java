@@ -80,12 +80,13 @@ public class HuffmannBinaryInputStream extends DataInputStream {
      */
     public SimpleNode[] readAlphabet () throws IOException {
         SimpleNode[] result = new SimpleNode[256];
+        boolean isInt = readNextBoolean ();
         int validChars = readNextInt ();
 
         int ch, count;
         for (int i = 0; i < validChars; i++) {
             ch = readNextChar ();
-            count = readNextInt ();
+            count = isInt ? readNextInt () : readNextChar ();
             result[ch] = new SimpleNode (ch, count);
         }
 
@@ -163,7 +164,7 @@ public class HuffmannBinaryInputStream extends DataInputStream {
 
     /**
      * Method return how many valid bits are in last byte of data When whole file has been loaded.
-     * 
+     *
      * @return byte from 0 to 8
      */
     public int getValidBitsInLastByte () {
@@ -212,5 +213,12 @@ public class HuffmannBinaryInputStream extends DataInputStream {
 
         double bufferCount = (bytesLeft / BUFFER_SIZE);
         return (int) Math.ceil (bytesLeft / bufferCount);
+    }
+
+
+
+    private boolean readNextBoolean () throws IOException {
+        bytesLoaded += 1;
+        return readBoolean ();
     }
 }
