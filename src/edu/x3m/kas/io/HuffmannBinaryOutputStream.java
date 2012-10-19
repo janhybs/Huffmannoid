@@ -12,15 +12,15 @@ import java.io.IOException;
 
 
 /**
- * Class for writing huffmann's code. 
- * 
+ * Class for writing huffmann's code.
+ *
  * @see HuffmannEncoder
  * @author Hans
  */
 public class HuffmannBinaryOutputStream extends DataOutputStream {
 
 
-    public static final int BUFFER_SIZE = 8 * 1024;
+    public static final int BUFFER_SIZE = 4 * 1024;
     //
     byte[] buffer = new byte[BUFFER_SIZE];
     int bufferIndex = 0;
@@ -29,9 +29,9 @@ public class HuffmannBinaryOutputStream extends DataOutputStream {
 
     /**
      * Construct HuffmannBinaryOutputStream
-     * 
+     *
      * @param file in which will be huffmann's code written
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     public HuffmannBinaryOutputStream (File file) throws FileNotFoundException {
         super (new FileOutputStream (file));
@@ -41,7 +41,8 @@ public class HuffmannBinaryOutputStream extends DataOutputStream {
 
     /**
      * Writes several header bytes
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void writePrequel () throws IOException {
         write (HuffmannEncoder.PREQUEL);
@@ -51,26 +52,37 @@ public class HuffmannBinaryOutputStream extends DataOutputStream {
 
     /**
      * Writes alphabet
-     * 
+     *
      * @param alphabet
      * @see SimpleNode
-     * @throws IOException 
+     * @throws IOException
      */
     public void writeAlphabet (final SimpleNode[] alphabet) throws IOException {
         int validChars = 0, i;
+        boolean isInt;
+        long max = Long.MIN_VALUE;
         SimpleNode node;
 
 
         //# counting valid chars
-        for (i = 0; i < alphabet.length; i++)
-            if (alphabet[i] != null) validChars++;
+        for (i = 0; i < alphabet.length; i++) {
+            if (alphabet[i] != null) {
+                validChars++;
+                max = alphabet[i].count > max ? alphabet[i].count : max;
+            }
+        }
 
+        isInt = max < 255 ? false : true;
+        writeBoolean (isInt);
         writeInt (validChars);
         for (i = 0; i < alphabet.length; i++) {
             node = alphabet[i];
             if (node != null) {
                 writeByte ((char) node.character);
-                writeInt (node.count);
+                
+                if (isInt) writeInt (node.count);
+                else writeByte (node.count);
+                
             }
         }
     }
@@ -79,9 +91,9 @@ public class HuffmannBinaryOutputStream extends DataOutputStream {
 
     /**
      * Writes ascii string
-     * 
+     *
      * @param string to be written
-     * @throws IOException 
+     * @throws IOException
      */
     private void write (String string) throws IOException {
         write (string.getBytes ());
@@ -91,9 +103,9 @@ public class HuffmannBinaryOutputStream extends DataOutputStream {
 
     /**
      * Formats and writes last incomplete byte
-     * 
+     *
      * @param string byte to be written
-     * @throws IOException 
+     * @throws IOException
      */
     public void writeLastByte (String string) throws IOException {
         write (new byte[] {BinaryUtil.format (string)});
