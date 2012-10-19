@@ -30,7 +30,7 @@ public interface IHuffmannMonitor {
      * Dispatched when progress is changed
      *
      * @param section name of the section
-     * @param prc     value from 0.0 to 1.0 indication percentual progress
+     * @param prc     value from 0 to 100 indication percentual progress
      */
-    void onSectionProgress (String section, double prc);
+    void onSectionProgress (String section, int prc);
 }
