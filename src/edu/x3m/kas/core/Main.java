@@ -1,6 +1,7 @@
 package edu.x3m.kas.core;
 
 
+import edu.x3m.kas.io.HuffmannInputStream;
 import edu.x3m.kas.monitors.IHuffmannMonitor;
 import edu.x3m.kas.utils.Timer;
 import java.io.File;
@@ -21,16 +22,16 @@ public class Main {
     public static void main (String[] args) throws FileNotFoundException, IOException, InterruptedException, UnsupportedFileException {
 
 
-        //File f1 = new File ("C:/huff/testfiles/test-01");
-        //File f2 = new File ("C:/huff/testfiles/test-01.x3m.huff");
+        File f1 = new File ("C:/huff/testfiles/test-01");
+        File f2 = new File ("C:/huff/testfiles/test-01.x3m.huff");
         //File f1 = new File ("C:/huff/testfiles/screenshots.bmp");
         //File f2 = new File ("C:/huff/testfiles/screenshots.bmp.x3m.huff");
         //File f1 = new File ("C:/huff/testfiles/club-bleach.gif");
         //File f2 = new File ("C:/huff/testfiles/club-bleach.gif.x3m.huff");
         //File f1 = new File ("C:/huff/testfiles/trololo.flv");
         //File f2 = new File ("C:/huff/testfiles/trololo.flv.x3m.huff");
-        File f1 = new File ("C:/huff/testfiles/galaxy.mp4");
-        File f2 = new File ("C:/huff/testfiles/galaxy.mp4.x3m.huff");
+        //File f1 = new File ("C:/huff/testfiles/galaxy.mp4");
+        //File f2 = new File ("C:/huff/testfiles/galaxy.mp4.x3m.huff");
 
 
 
@@ -40,7 +41,7 @@ public class Main {
         h.encode ();
         TIMER.tac ("Encoded: ");
 
-        //new HuffmannInputStream (f2).printBinaryAll ();
+        new HuffmannInputStream (f2).printBinaryAll ();
 
 
         TIMER.tic ();
