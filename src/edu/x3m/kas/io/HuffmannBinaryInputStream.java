@@ -23,7 +23,7 @@ public class HuffmannBinaryInputStream extends DataInputStream {
     public static final int BYTE = 8;
     public static final int BUFFER_SIZE = 4 * 1024;
     //
-    private final long bytesTotal;
+    public final long bytesTotal;
     private long bytesLoaded;
     private int bufferSize = -1;
     private byte[] buffer;
