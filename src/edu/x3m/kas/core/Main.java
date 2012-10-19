@@ -23,14 +23,14 @@ public class Main {
 
         //File f1 = new File ("C:/huff/testfiles/test-01");
         //File f2 = new File ("C:/huff/testfiles/test-01.x3m.huff");
-        File f1 = new File ("C:/huff/testfiles/screenshots.bmp");
-        File f2 = new File ("C:/huff/testfiles/screenshots.bmp.x3m.huff");
+        //File f1 = new File ("C:/huff/testfiles/screenshots.bmp");
+        //File f2 = new File ("C:/huff/testfiles/screenshots.bmp.x3m.huff");
         //File f1 = new File ("C:/huff/testfiles/club-bleach.gif");
         //File f2 = new File ("C:/huff/testfiles/club-bleach.gif.x3m.huff");
         //File f1 = new File ("C:/huff/testfiles/trololo.flv");
         //File f2 = new File ("C:/huff/testfiles/trololo.flv.x3m.huff");
-        //File f1 = new File ("C:/huff/testfiles/galaxy.mp4");
-        //File f2 = new File ("C:/huff/testfiles/galaxy.mp4.x3m.huff");
+        File f1 = new File ("C:/huff/testfiles/galaxy.mp4");
+        File f2 = new File ("C:/huff/testfiles/galaxy.mp4.x3m.huff");
 
 
 
