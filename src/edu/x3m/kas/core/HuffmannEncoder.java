@@ -131,7 +131,7 @@ public class HuffmannEncoder implements IProgressable {
         byte[] bytesToWrite;
         int ch, size;
         int bytesLoaded = 0;
-        int prcCur, prcPrev = 0;
+        long prcCur, prcPrev = 0;
 
         while ((buffer = his.getNextNormalBuffer ()) != null) {
 
@@ -158,9 +158,12 @@ public class HuffmannEncoder implements IProgressable {
             //# monitoring
             if (huffmannMonitor != null) {
                 bytesLoaded += buffer.length;
-                prcCur = (100 * bytesLoaded / (int) his.bytesTotal);
+                prcCur = (int) (((double) bytesLoaded / his.bytesTotal) * 100);
+                if (prcCur == -10)
+                    System.out.println ("cac");
+
                 if (prcCur != prcPrev)
-                    huffmannMonitor.onSectionProgress (ENCODING, prcPrev = prcCur);
+                    huffmannMonitor.onSectionProgress (ENCODING, (int) (prcPrev = prcCur));
             }
         }
 
