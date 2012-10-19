@@ -2,7 +2,8 @@ package edu.x3m.kas.monitors;
 
 
 /**
- *
+ * Iface for monitoring huffmann's algorithm progress.
+ * 
  * @author Hans
  */
 public interface IHuffmannMonitor {
