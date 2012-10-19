@@ -20,11 +20,13 @@ public class HuffmannInputStream extends DataInputStream {
     public static final int BUFFER_SIZE = 8 * 1024;
     //
     byte[] buffer = new byte[BUFFER_SIZE];
+    public final long bytesTotal;
 
 
 
     public HuffmannInputStream (File file) throws FileNotFoundException {
         super (new FileInputStream (file));
+        bytesTotal = file.length ();
     }
 
 
